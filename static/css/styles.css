@@ -2,22 +2,42 @@
     background: var(--bs-dark);
     border-radius: 8px;
     padding: 1rem;
-    min-height: 500px;
+    min-height: 80vh;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.map-container svg {
-    max-width: 100%;
+.map-container object {
+    width: 100%;
+    height: 100%;
+}
+
+/* Style for interactive elements in SVG */
+:root svg {
+    width: 100%;
     height: auto;
 }
 
-.campsite {
+/* Style for campsite elements */
+[id^="site_"] {
     cursor: pointer;
     transition: fill-opacity 0.3s ease;
 }
 
-.campsite:hover {
+[id^="site_"]:hover {
     fill-opacity: 0.8;
+}
+
+/* Active site styling */
+.active {
+    stroke: var(--bs-primary);
+    stroke-width: 2;
+}
+
+/* Ensure control panel is always visible */
+@media (max-width: 992px) {
+    .map-container {
+        min-height: 60vh;
+    }
 }

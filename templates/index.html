@@ -8,17 +8,16 @@
     <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div class="container my-4">
+    <div class="container-fluid p-4">
         <h1 class="text-center mb-4">Camp Site Map</h1>
         
         <div class="row">
-            <div class="col-md-9">
+            <div class="col-lg-9 mb-4">
                 <div class="map-container">
-                    <!-- Camp map SVG embedded directly -->
-                    <object data="{{ url_for('static', filename='images/campmap.svg') }}" type="image/svg+xml" id="campMap" class="w-100 h-100"></object>
+                    <object data="{{ url_for('static', filename='images/STC Map.svg') }}" type="image/svg+xml" id="campMap" class="w-100 h-100"></object>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-lg-3">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Controls</h5>
@@ -27,7 +26,7 @@
                         </button>
                         <div class="selected-site mt-3">
                             <h6>Selected Site:</h6>
-                            <p id="selectedSite">None</p>
+                            <p id="selectedSite" class="mb-0">None</p>
                         </div>
                     </div>
                 </div>
