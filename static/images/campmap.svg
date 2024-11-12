@@ -1,0 +1,64 @@
+<svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="100%" height="100%" fill="#2a2a2a"/>
+    
+    <!-- Campsites -->
+    <g class="campsites">
+        <!-- Site A -->
+        <path class="campsite" 
+              data-name="Campsite A"
+              d="M100,100 L150,100 L125,50 Z" 
+              fill="#4CAF50"/>
+              
+        <!-- Site B -->
+        <path class="campsite"
+              data-name="Campsite B"
+              d="M200,100 L250,100 L225,50 Z"
+              fill="#4CAF50"/>
+              
+        <!-- Site C -->
+        <path class="campsite"
+              data-name="Campsite C"
+              d="M300,100 L350,100 L325,50 Z"
+              fill="#4CAF50"/>
+              
+        <!-- Additional campsites -->
+        <path class="campsite"
+              data-name="Campsite D"
+              d="M150,200 L200,200 L175,150 Z"
+              fill="#4CAF50"/>
+              
+        <path class="campsite"
+              data-name="Campsite E"
+              d="M250,200 L300,200 L275,150 Z"
+              fill="#4CAF50"/>
+    </g>
+    
+    <!-- Paths -->
+    <path d="M125,100 Q175,125 225,100" 
+          stroke="#8b4513" 
+          fill="none" 
+          stroke-width="3"/>
+          
+    <!-- Labels -->
+    <text x="125" y="120" 
+          fill="#fff" 
+          font-size="12px" 
+          text-anchor="middle">A</text>
+    <text x="225" y="120" 
+          fill="#fff" 
+          font-size="12px" 
+          text-anchor="middle">B</text>
+    <text x="325" y="120" 
+          fill="#fff" 
+          font-size="12px" 
+          text-anchor="middle">C</text>
+    <text x="175" y="220" 
+          fill="#fff" 
+          font-size="12px" 
+          text-anchor="middle">D</text>
+    <text x="275" y="220" 
+          fill="#fff" 
+          font-size="12px" 
+          text-anchor="middle">E</text>
+</svg>

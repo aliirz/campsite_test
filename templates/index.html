@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Camp Site Map</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-4">
+        <h1 class="text-center mb-4">Camp Site Map</h1>
+        
+        <div class="row">
+            <div class="col-md-9">
+                <div class="map-container">
+                    <!-- Camp map SVG embedded directly -->
+                    <object data="{{ url_for('static', filename='images/campmap.svg') }}" type="image/svg+xml" id="campMap" class="w-100 h-100"></object>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Controls</h5>
+                        <button id="randomizeBtn" class="btn btn-secondary w-100 mb-3">
+                            Randomize Opacities
+                        </button>
+                        <div class="selected-site mt-3">
+                            <h6>Selected Site:</h6>
+                            <p id="selectedSite">None</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/map.js') }}"></script>
+</body>
+</html>

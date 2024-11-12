@@ -1,0 +1,23 @@
+.map-container {
+    background: var(--bs-dark);
+    border-radius: 8px;
+    padding: 1rem;
+    min-height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.map-container svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.campsite {
+    cursor: pointer;
+    transition: fill-opacity 0.3s ease;
+}
+
+.campsite:hover {
+    fill-opacity: 0.8;
+}
