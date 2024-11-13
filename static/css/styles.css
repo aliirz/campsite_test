@@ -21,38 +21,18 @@
 
 /* Style for campsite elements */
 [id^="Site-"] {
-    cursor: pointer;
+    cursor: pointer !important;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    transform-origin: center;
+    transform-box: fill-box;
 }
 
 [id^="Site-"]:hover {
-    fill-opacity: 1;
     transform: scale(1.05);
-    filter: drop-shadow(0 0 3px var(--bs-primary));
+    filter: drop-shadow(0 0 5px var(--bs-primary));
+    fill: var(--bs-primary-bg-subtle);
     stroke: var(--bs-primary);
-    stroke-width: 1.5;
-}
-
-/* Tooltip styles */
-[id^="Site-"]::after {
-    content: attr(id);
-    position: absolute;
-    background: var(--bs-dark);
-    color: var(--bs-light);
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 12px;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.2s ease-in-out;
-    pointer-events: none;
-    z-index: 1000;
-}
-
-[id^="Site-"]:hover::after {
-    opacity: 1;
-    transform: translateY(0);
+    stroke-width: 2;
 }
 
 /* Reduced opacity class */
@@ -62,10 +42,11 @@
 
 /* Active site styling */
 .active {
-    stroke: var(--bs-primary);
-    stroke-width: 2;
-    fill-opacity: 1 !important;
-    filter: drop-shadow(0 0 4px var(--bs-primary));
+    transform: scale(1.05) !important;
+    filter: drop-shadow(0 0 5px var(--bs-primary)) !important;
+    fill: var(--bs-primary-bg-subtle) !important;
+    stroke: var(--bs-primary) !important;
+    stroke-width: 2 !important;
 }
 
 /* Animation classes */
