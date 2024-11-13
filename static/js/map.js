@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         user-select: none;
                     }
 
-                    [id^="Site-"] > text {
-                        fill: currentColor;
+                    [id^="Site-"] text {
                         pointer-events: none;
                         user-select: none;
+                        transition: opacity 0.3s ease;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill-opacity: 0.3;
                     }
 
-                    .reduced-opacity > text {
-                        fill-opacity: 0.3 !important;
+                    .reduced-opacity text {
+                        opacity: 0 !important;
                     }
                 `;
                 
