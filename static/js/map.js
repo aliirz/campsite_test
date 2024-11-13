@@ -44,8 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     .reduced-opacity {
-                        fill-opacity: 0.3;
-                        transition: fill-opacity 0.3s ease;
+                        fill-opacity: 0.15 !important;
                     }
 
                     .reduced-opacity text {
@@ -121,49 +120,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return shuffled.slice(0, count);
         }
 
-        // Function to update site opacity with animation
-        function updateSiteOpacity(site, isReduced) {
-            // Store current opacity for animation
-            site.style.setProperty('--previous-opacity', site.classList.contains('reduced-opacity') ? '0.3' : '1');
-            site.style.setProperty('--target-opacity', isReduced ? '0.3' : '1');
-            
-            // Add animation class
-            site.classList.add('site-fade');
-            
-            // Update opacity class
-            if (isReduced) {
-                site.classList.add('reduced-opacity');
-            } else {
-                site.classList.remove('reduced-opacity');
-            }
-            
-            // Remove animation class after animation completes
-            setTimeout(() => {
-                site.classList.remove('site-fade');
-            }, 500);
-        }
-
-        // Function to reset random sites
-        function resetRandomSites() {
-            if (isAnimating) return;
-            
-            isAnimating = true;
-            selectedRandomSites.forEach((site, index) => {
-                setTimeout(() => {
-                    updateSiteOpacity(site, false);
-                    if (index === selectedRandomSites.length - 1) {
-                        selectedRandomSites = [];
-                        isAnimating = false;
-                        
-                        // Update site info if currently selected site was affected
-                        if (currentlySelectedSite) {
-                            updateSiteInfo(currentlySelectedSite.id, currentlySelectedSite);
-                        }
-                    }
-                }, index * 25);
-            });
-        }
-
         // Function to update site information display
         function updateSiteInfo(siteId, element) {
             const info = siteInfo[siteId] || {
@@ -213,6 +169,26 @@ document.addEventListener('DOMContentLoaded', function() {
             updateSiteInfo(site.id, site);
         }
 
+        // Function to reset random sites
+        function resetRandomSites() {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            randomizeBtn.disabled = true;
+            
+            selectedRandomSites.forEach((site, index) => {
+                setTimeout(() => {
+                    site.classList.remove('reduced-opacity');
+                    
+                    if (index === selectedRandomSites.length - 1) {
+                        selectedRandomSites = [];
+                        isAnimating = false;
+                        randomizeBtn.disabled = false;
+                    }
+                }, index * 50);
+            });
+        }
+
         // Function to toggle opacity state
         function toggleOpacity() {
             if (isAnimating) return;
@@ -227,15 +203,17 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const isReduced = !site.classList.contains('reduced-opacity');
-                    updateSiteOpacity(site, isReduced);
                     
-                    // Update site info if this is the currently selected site
-                    if (site === currentlySelectedSite) {
-                        if (isReduced) {
+                    if (isReduced) {
+                        site.classList.add('reduced-opacity');
+                        // Clear selection if site becomes unavailable
+                        if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
+                            updateSiteInfo(site.id, site);
                         }
-                        updateSiteInfo(site.id, site);
+                    } else {
+                        site.classList.remove('reduced-opacity');
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
@@ -244,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             isAnimating = false;
                         }, 100);
                     }
-                }, index * 25);
+                }, index * 50); // Slightly longer delay between sites
             });
         }
 
