@@ -5,13 +5,20 @@ document.addEventListener('DOMContentLoaded', function() {
     mapObject.addEventListener('load', function() {
         const svgDoc = mapObject.contentDocument;
         
-        // Add error handling for SVG style injection
-        const injectStyles = () => {
-            if (svgDoc && svgDoc.documentElement) {
-                // Check if styles are already injected
-                const existingStyle = svgDoc.querySelector('style');
-                if (existingStyle) return;
+        // Add error handling for SVG style injection with multiple retries
+        const injectStyles = (retryCount = 0, maxRetries = 5) => {
+            if (!svgDoc || !svgDoc.documentElement) {
+                if (retryCount < maxRetries) {
+                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 100);
+                }
+                return;
+            }
 
+            // Check if styles are already injected
+            const existingStyle = svgDoc.querySelector('style');
+            if (existingStyle) return;
+
+            try {
                 const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
                 styleElement.textContent = `
                     [id^="Site-"] {
@@ -29,10 +36,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 `;
                 svgDoc.documentElement.appendChild(styleElement);
+            } catch (error) {
+                console.warn('Style injection attempt failed, retrying...', error);
+                if (retryCount < maxRetries) {
+                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 100);
+                }
             }
         };
 
-        // Retry style injection if initial attempt fails
+        // Initial style injection with retry mechanism
         setTimeout(injectStyles, 100);
         
         // Select all site elements with correct case-sensitive prefix
