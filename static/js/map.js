@@ -6,19 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const svgDoc = mapObject.contentDocument;
         
         // Add error handling for SVG style injection with multiple retries
-        const injectStyles = (retryCount = 0, maxRetries = 5) => {
-            if (!svgDoc || !svgDoc.documentElement) {
+        function injectStyles(retryCount = 0, maxRetries = 5) {
+            if (!svgDoc?.documentElement?.ownerDocument?.documentElement) {
                 if (retryCount < maxRetries) {
-                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 100);
+                    console.log(`Retry ${retryCount + 1}: Waiting for SVG document...`);
+                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 200);
                 }
                 return;
             }
 
-            // Check if styles are already injected
-            const existingStyle = svgDoc.querySelector('style');
-            if (existingStyle) return;
-
             try {
+                // Check if styles are already injected
+                if (svgDoc.querySelector('style')) return;
+
                 const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
                 styleElement.textContent = `
                     [id^="Site-"] {
@@ -35,17 +35,25 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill-opacity: 0.3;
                     }
                 `;
-                svgDoc.documentElement.appendChild(styleElement);
+                
+                // Ensure we append to the SVG root element
+                const svgRoot = svgDoc.documentElement;
+                if (svgRoot) {
+                    svgRoot.appendChild(styleElement);
+                    console.log('SVG styles successfully injected');
+                }
             } catch (error) {
-                console.warn('Style injection attempt failed, retrying...', error);
+                console.warn('Style injection failed:', error);
                 if (retryCount < maxRetries) {
-                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 100);
+                    setTimeout(() => injectStyles(retryCount + 1, maxRetries), 200);
                 }
             }
-        };
+        }
 
-        // Initial style injection with retry mechanism
-        injectStyles();
+        // Initial style injection with delay to ensure SVG is loaded
+        setTimeout(() => {
+            injectStyles();
+        }, 100);
         
         // Select all site elements with correct case-sensitive prefix
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const siteCapacity = document.getElementById('siteCapacity');
         const siteFeatures = document.getElementById('siteFeatures');
 
-        // Mock data for site information (in real app, this would come from a database)
+        // Mock data for site information
         const siteInfo = {
             'Site-A1': {
                 type: 'RV Site',
