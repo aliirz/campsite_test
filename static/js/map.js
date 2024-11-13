@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update button text
         randomizeBtn.textContent = 'Toggle Site Opacity';
 
+        // Store selected sites
+        let selectedRandomSites = null;
+
+        // Function to get random sites
+        function getRandomSites(sites, count) {
+            const siteArray = Array.from(sites);
+            const shuffled = [...siteArray].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
             const currentOpacity = parseFloat(element.style.fillOpacity) || 1;
@@ -33,20 +43,39 @@ document.addEventListener('DOMContentLoaded', function() {
         function toggleOpacity() {
             randomizeBtn.disabled = true; // Prevent multiple clicks during animation
             
-            const isReduced = campsites[0].classList.contains('reduced-opacity');
+            // If no sites are selected or all sites are at default opacity, select new random sites
+            if (!selectedRandomSites || !selectedRandomSites[0].classList.contains('reduced-opacity')) {
+                // Reset previous selection if exists
+                if (selectedRandomSites) {
+                    selectedRandomSites.forEach(site => {
+                        site.classList.remove('reduced-opacity');
+                        animateOpacityChange(site, 1);
+                    });
+                }
+                // Select new random sites
+                selectedRandomSites = getRandomSites(campsites, 20);
+            }
             
-            campsites.forEach((site, index) => {
+            // Toggle opacity for selected sites only
+            selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
+                    const isReduced = site.classList.contains('reduced-opacity');
+                    
                     if (isReduced) {
                         site.classList.remove('reduced-opacity');
                         animateOpacityChange(site, 1);
+                        
+                        // Reset selection when all sites return to default
+                        if (index === selectedRandomSites.length - 1) {
+                            selectedRandomSites = null;
+                        }
                     } else {
                         site.classList.add('reduced-opacity');
                         animateOpacityChange(site, 0.3);
                     }
                     
                     // Enable button after last animation starts
-                    if (index === campsites.length - 1) {
+                    if (index === selectedRandomSites.length - 1) {
                         setTimeout(() => {
                             randomizeBtn.disabled = false;
                         }, 500);
@@ -65,18 +94,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Remove active class from all sites
                 campsites.forEach(s => {
                     s.classList.remove('active');
-                    // Reset opacity for non-selected sites
-                    if (s !== this) {
-                        if (s.classList.contains('reduced-opacity')) {
-                            animateOpacityChange(s, 0.3);
-                        } else {
-                            animateOpacityChange(s, 1);
-                        }
+                    // Keep opacity state for non-selected sites
+                    if (s !== this && !s.classList.contains('reduced-opacity')) {
+                        animateOpacityChange(s, 1);
                     }
                 });
                 
-                // Add active class to clicked site
+                // Add active class to clicked site and ensure it's fully opaque
                 this.classList.add('active');
+                this.classList.remove('reduced-opacity');
                 animateOpacityChange(this, 1);
             });
         });
