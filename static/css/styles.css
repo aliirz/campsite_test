@@ -22,17 +22,38 @@
 /* Style for campsite elements */
 [id^="site_"] {
     cursor: pointer;
-    transition: fill-opacity 0.3s ease;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    fill-opacity: 0.7;
 }
 
 [id^="site_"]:hover {
-    fill-opacity: 0.8;
+    fill-opacity: 1;
+    transform: scale(1.02);
 }
 
 /* Active site styling */
 .active {
     stroke: var(--bs-primary);
     stroke-width: 2;
+    fill-opacity: 1 !important;
+    filter: drop-shadow(0 0 2px var(--bs-primary));
+}
+
+/* Animation classes */
+.site-fade {
+    animation: fadeTransition 0.5s ease-in-out;
+}
+
+@keyframes fadeTransition {
+    0% {
+        fill-opacity: var(--previous-opacity, 0.7);
+    }
+    50% {
+        fill-opacity: 0.5;
+    }
+    100% {
+        fill-opacity: var(--target-opacity, 0.7);
+    }
 }
 
 /* Ensure control panel is always visible */
