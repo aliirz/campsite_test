@@ -24,21 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 styleElement.textContent = `
                     [id^="Site-"] {
                         cursor: pointer;
-                        fill: var(--bs-dark);
-                        stroke: var(--bs-secondary);
-                        stroke-width: 1;
-                    }
-
-                    [id^="Site-"]:hover:not(.active) {
-                        fill: var(--bs-secondary-bg-subtle);
-                        stroke: var(--bs-secondary);
-                        stroke-width: 1.5;
-                    }
-
-                    .active {
-                        fill: #60a5fa;
-                        stroke: #2563eb;
-                        stroke-width: 1.5;
                     }
 
                     .reduced-opacity {
@@ -167,15 +152,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     } else {
                         classList.add('reduced-opacity');
                         animateOpacityChange(site, 0.3);
-                    }
-                    
-                    // Update site info if this is the currently selected site
-                    if (site === currentlySelectedSite) {
-                        updateSiteInfo(site.id, site);
-                        // Remove active class if site becomes unavailable
-                        if (!isReduced) {
+                        
+                        // Remove active state if this site becomes unavailable
+                        if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
+                            updateSiteInfo(site.id, site);
                         }
                     }
                     
@@ -212,16 +194,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update site information
                 updateSiteInfo(this.id, this);
                 
-                // Remove active class from previous selection
-                if (currentlySelectedSite) {
-                    currentlySelectedSite.classList.remove('active');
-                }
-                
-                // Update current selection only if site is available
                 if (!this.classList.contains('reduced-opacity')) {
+                    // Remove active state from previous selection
+                    if (currentlySelectedSite) {
+                        currentlySelectedSite.classList.remove('active');
+                    }
                     currentlySelectedSite = this;
                     this.classList.add('active');
                 } else {
+                    if (currentlySelectedSite) {
+                        currentlySelectedSite.classList.remove('active');
+                    }
                     currentlySelectedSite = null;
                 }
             });
