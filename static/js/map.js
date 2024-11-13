@@ -41,11 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         stroke-width: 2 !important;
                     }
 
-                    .reduced-opacity {
-                        fill-opacity: 0.3;
-                    }
-
-                    [id^="Site-"].reduced-opacity text {
+                    .reduced-opacity, .reduced-opacity text {
                         opacity: 0.3;
                     }
                 `;
@@ -169,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function() {
             isAnimating = true;
             
             if (selectedRandomSites.length === 0) {
-                selectedRandomSites = getRandomSites(campsites, 50);
+                selectedRandomSites = getRandomSites(campsites, Math.ceil(campsites.length / 2));
             }
             
             selectedRandomSites.forEach((site, index) => {
@@ -177,11 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     const isReduced = site.classList.contains('reduced-opacity');
                     updateSiteOpacity(site, !isReduced);
                     
-                    // Remove active state if this site becomes unavailable
-                    if (!isReduced && site === currentlySelectedSite) {
-                        site.classList.remove('active');
-                        currentlySelectedSite = null;
-                        selectedSiteText.textContent = 'None';
+                    // Update site info if this is the currently selected site
+                    if (site === currentlySelectedSite) {
                         updateSiteInfo(site.id, site);
                     }
                     
@@ -189,9 +182,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         setTimeout(() => {
                             randomizeBtn.disabled = false;
                             isAnimating = false;
-                        }, 500);
+                        }, 100);
                     }
-                }, index * 50);
+                }, index * 25); // Reduced delay between sites
             });
         }
 
