@@ -28,9 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         stroke: #4a5568;
                         stroke-width: 1;
                         user-select: none;
-                        -webkit-user-select: none;
-                        -moz-user-select: none;
-                        -ms-user-select: none;
+                    }
+
+                    [id^="Site-"] text {
+                        pointer-events: none;
+                        user-select: none;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -43,16 +45,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill-opacity: 0.3;
                     }
 
-                    .reduced-opacity text {
+                    [id^="Site-"].reduced-opacity text {
                         opacity: 0.3;
-                    }
-
-                    /* Prevent text selection globally in SVG */
-                    svg {
-                        user-select: none;
-                        -webkit-user-select: none;
-                        -moz-user-select: none;
-                        -ms-user-select: none;
                     }
                 `;
                 
@@ -68,11 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
                     campsites.forEach(site => {
                         site.style.pointerEvents = 'all';
-                        // Get associated text element
-                        const siteText = site.querySelector('text') || svgDoc.querySelector(`text[data-site="${site.id}"]`);
-                        if (siteText) {
-                            siteText.style.pointerEvents = 'none';
-                        }
                     });
                 }
             } catch (error) {
@@ -123,15 +112,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return shuffled.slice(0, count);
         }
 
-        // Function to update site and text opacity
+        // Function to update site opacity
         function updateSiteOpacity(site, isReduced) {
-            const siteText = site.querySelector('text') || svgDoc.querySelector(`text[data-site="${site.id}"]`);
             if (isReduced) {
                 site.classList.add('reduced-opacity');
-                if (siteText) siteText.classList.add('reduced-opacity');
             } else {
                 site.classList.remove('reduced-opacity');
-                if (siteText) siteText.classList.remove('reduced-opacity');
             }
         }
 
