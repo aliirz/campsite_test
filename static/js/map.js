@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     [id^="Site-"] text {
                         pointer-events: none;
                         user-select: none;
-                        transition: opacity 0.3s ease;
+                        fill: #e2e8f0;
+                        transition: opacity 0.3s ease, fill 0.3s ease;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -43,17 +44,26 @@ document.addEventListener('DOMContentLoaded', function() {
                         stroke-width: 2 !important;
                     }
 
+                    [id^="Site-"].active:not(.reduced-opacity) text {
+                        fill: #ffffff !important;
+                    }
+
                     .reduced-opacity {
                         fill-opacity: 0.15 !important;
                     }
 
                     .reduced-opacity text {
                         opacity: 0 !important;
+                        fill-opacity: 0 !important;
                     }
 
                     [id^="Site-"]:hover:not(.reduced-opacity) {
                         fill: #4b5563;
                         stroke: #6b7280;
+                    }
+
+                    [id^="Site-"]:hover:not(.reduced-opacity) text {
+                        fill: #ffffff;
                     }
                 `;
                 
@@ -69,6 +79,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
                     campsites.forEach(site => {
                         site.style.pointerEvents = 'all';
+                        
+                        // Ensure text elements inherit transitions
+                        const textElements = site.querySelectorAll('text');
+                        textElements.forEach(text => {
+                            text.style.transition = 'opacity 0.3s ease, fill 0.3s ease';
+                        });
                     });
                 }
             } catch (error) {
@@ -112,6 +128,20 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedRandomSites = [];
         let isAnimating = false;
         let doubleClickTimer = null;
+
+        // Function to handle text visibility
+        function updateTextVisibility(site, isUnavailable) {
+            const textElements = site.querySelectorAll('text');
+            textElements.forEach(text => {
+                if (isUnavailable) {
+                    text.style.opacity = '0';
+                    text.style.fillOpacity = '0';
+                } else {
+                    text.style.opacity = '1';
+                    text.style.fillOpacity = '1';
+                }
+            });
+        }
 
         // Function to get random sites
         function getRandomSites(sites, count) {
@@ -179,6 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     site.classList.remove('reduced-opacity');
+                    updateTextVisibility(site, false);
                     
                     if (index === selectedRandomSites.length - 1) {
                         selectedRandomSites = [];
@@ -206,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (isReduced) {
                         site.classList.add('reduced-opacity');
+                        updateTextVisibility(site, true);
                         // Clear selection if site becomes unavailable
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
@@ -214,6 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         site.classList.remove('reduced-opacity');
+                        updateTextVisibility(site, false);
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
