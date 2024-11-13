@@ -41,8 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         stroke-width: 2 !important;
                     }
 
-                    .reduced-opacity, .reduced-opacity text {
+                    .reduced-opacity {
                         opacity: 0.3;
+                    }
+
+                    .reduced-opacity text {
+                        opacity: 0.3 !important;
                     }
                 `;
                 
@@ -110,10 +114,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to update site opacity
         function updateSiteOpacity(site, isReduced) {
+            // Get the text element within this site
+            const textElement = site.querySelector('text');
+            
             if (isReduced) {
                 site.classList.add('reduced-opacity');
+                if (textElement) textElement.style.opacity = '0.3';
             } else {
                 site.classList.remove('reduced-opacity');
+                if (textElement) textElement.style.opacity = '1';
             }
         }
 
