@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Wait for SVG to load through object tag
     const mapObject = document.getElementById('campMap');
+    let currentlySelectedSite = null;
     
     mapObject.addEventListener('load', function() {
         const svgDoc = mapObject.contentDocument;
@@ -23,12 +24,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 styleElement.textContent = `
                     [id^="Site-"] {
                         cursor: pointer;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        fill: var(--bs-dark);
+                        stroke: var(--bs-secondary);
+                        stroke-width: 1;
+                    }
+
+                    [id^="Site-"]:hover:not(.active) {
+                        fill: var(--bs-secondary-bg-subtle);
+                        stroke: var(--bs-secondary);
+                        stroke-width: 1.5;
+                        filter: drop-shadow(0 0 2px var(--bs-secondary));
                     }
 
                     .active {
+                        transform: scale(1.05);
+                        filter: drop-shadow(0 0 4px #0d6efd);
                         fill: #cfe2ff;
                         stroke: #084298;
-                        stroke-width: 3;
+                        stroke-width: 2;
+                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                     }
 
                     .reduced-opacity {
@@ -36,7 +51,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 `;
                 
-                // Ensure we append to the SVG root element
                 const svgRoot = svgDoc.documentElement;
                 if (svgRoot) {
                     svgRoot.appendChild(styleElement);
@@ -55,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
             injectStyles();
         }, 100);
         
-        // Select all site elements with correct case-sensitive prefix
+        // Select all site elements
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
@@ -81,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Store selected sites
         let selectedRandomSites = [];
+        let isAnimating = false;
 
         // Function to get random sites
         function getRandomSites(sites, count) {
@@ -91,17 +106,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
+            element.style.transition = 'fill-opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             element.style.fillOpacity = targetOpacity;
         }
 
         // Function to reset random sites
         function resetRandomSites() {
+            if (isAnimating) return;
+            
             if (selectedRandomSites.length > 0) {
                 selectedRandomSites.forEach(site => {
                     site.classList.remove('reduced-opacity');
                     animateOpacityChange(site, 1);
                 });
                 selectedRandomSites = [];
+                
+                // Update site info if currently selected site was affected
+                if (currentlySelectedSite) {
+                    updateSiteInfo(currentlySelectedSite.id, currentlySelectedSite);
+                }
             }
         }
 
@@ -113,7 +136,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 features: ['Picnic Table', 'Fire Ring']
             };
             
-            // Check if site has reduced opacity
             const isUnavailable = element.classList.contains('reduced-opacity');
             const status = isUnavailable ? 'unavailable' : 'available';
             
@@ -131,14 +153,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to toggle opacity state
         function toggleOpacity() {
-            randomizeBtn.disabled = true;
+            if (isAnimating) return;
             
-            // Select new random sites only if none are currently selected
+            randomizeBtn.disabled = true;
+            isAnimating = true;
+            
             if (selectedRandomSites.length === 0) {
                 selectedRandomSites = getRandomSites(campsites, 50);
             }
             
-            // Toggle opacity for selected sites
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const classList = site.classList;
@@ -152,10 +175,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         animateOpacityChange(site, 0.3);
                     }
                     
-                    // Enable button after last animation starts
+                    // Update site info if this is the currently selected site
+                    if (site === currentlySelectedSite) {
+                        updateSiteInfo(site.id, site);
+                    }
+                    
                     if (index === selectedRandomSites.length - 1) {
                         setTimeout(() => {
                             randomizeBtn.disabled = false;
+                            isAnimating = false;
                         }, 500);
                     }
                 }, index * 50);
@@ -167,10 +195,11 @@ document.addEventListener('DOMContentLoaded', function() {
             let lastClickTime = 0;
             
             site.addEventListener('click', function(e) {
+                if (isAnimating) return;
+                
                 const currentTime = new Date().getTime();
                 const timeDiff = currentTime - lastClickTime;
                 
-                // Handle double click (if click interval is less than 300ms)
                 if (timeDiff < 300) {
                     resetRandomSites();
                     return;
@@ -181,22 +210,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
                 selectedSiteText.textContent = siteName;
                 
-                // Update site information with the site element
+                // Update site information
                 updateSiteInfo(this.id, this);
                 
-                // Remove active class from all sites
-                campsites.forEach(s => {
-                    s.classList.remove('active');
-                    if (s !== this && !s.classList.contains('reduced-opacity')) {
-                        animateOpacityChange(s, 1);
-                    }
-                });
-                
-                // Add active class to clicked site
-                this.classList.add('active');
-                if (!this.classList.contains('reduced-opacity')) {
-                    animateOpacityChange(this, 1);
+                // Remove active class from previous selection
+                if (currentlySelectedSite) {
+                    currentlySelectedSite.classList.remove('active');
                 }
+                
+                // Update current selection
+                currentlySelectedSite = this;
+                this.classList.add('active');
             });
         });
 

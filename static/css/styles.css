@@ -2,8 +2,8 @@
     background: var(--bs-dark);
     border-radius: 8px;
     padding: 1rem;
-    min-height: 66vh;  /* Increased from 60vh */
-    max-height: 88vh;  /* Increased from 80vh */
+    min-height: 66vh;
+    max-height: 88vh;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,23 +11,27 @@
 }
 
 .map-container object {
-    width: 110%;     /* Increased from 100% */
-    height: 110%;    /* Increased from 100% */
-    max-height: 88vh;  /* Increased from 80vh */
+    width: 110%;
+    height: 110%;
+    max-height: 88vh;
     object-fit: contain;
 }
 
 /* Style for interactive elements in SVG */
 :root svg {
-    width: 110%;     /* Increased from 100% */
-    height: 110%;    /* Increased from 100% */
-    max-height: 88vh;  /* Increased from 80vh */
+    width: 110%;
+    height: 110%;
+    max-height: 88vh;
     object-fit: contain;
 }
 
 /* Style for campsite elements */
 [id^="Site-"] {
     cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    fill: var(--bs-dark);
+    stroke: var(--bs-secondary);
+    stroke-width: 1;
 }
 
 /* Ensure control panel is always visible */
@@ -39,12 +43,12 @@
 
 @media (min-width: 1200px) {
     .map-container {
-        max-height: 77vh;  /* Increased from 70vh */
+        max-height: 77vh;
     }
     
     .map-container object,
     :root svg {
-        max-height: 77vh;  /* Increased from 70vh */
+        max-height: 77vh;
     }
 }
 
@@ -55,16 +59,25 @@
 
 /* Active site styling */
 .active {
-    transform: scale(1.05) !important;
-    filter: drop-shadow(0 0 5px var(--bs-primary)) !important;
-    fill: var(--bs-primary-bg-subtle) !important;
-    stroke: var(--bs-primary) !important;
-    stroke-width: 2 !important;
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 4px var(--bs-primary));
+    fill: var(--bs-primary-bg-subtle);
+    stroke: var(--bs-primary);
+    stroke-width: 2;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effect for sites */
+[id^="Site-"]:hover:not(.active) {
+    fill: var(--bs-secondary-bg-subtle);
+    stroke: var(--bs-secondary);
+    stroke-width: 1.5;
+    filter: drop-shadow(0 0 2px var(--bs-secondary));
 }
 
 /* Animation classes */
 .site-fade {
-    animation: fadeTransition 0.5s ease-in-out;
+    animation: fadeTransition 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes fadeTransition {
@@ -81,7 +94,7 @@
 
 /* Site Information Panel Styling */
 .site-info {
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .site-features li {
