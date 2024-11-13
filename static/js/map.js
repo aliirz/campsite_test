@@ -30,7 +30,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         user-select: none;
                     }
 
-                    [id^="Site-"] text {
+                    [id^="Site-"] > text {
+                        fill: currentColor;
                         pointer-events: none;
                         user-select: none;
                     }
@@ -42,11 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     .reduced-opacity {
-                        opacity: 0.3;
+                        fill-opacity: 0.3;
                     }
 
-                    .reduced-opacity text {
-                        opacity: 0.3 !important;
+                    .reduced-opacity > text {
+                        fill-opacity: 0.3 !important;
                     }
                 `;
                 
@@ -114,15 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to update site opacity
         function updateSiteOpacity(site, isReduced) {
-            // Get the text element within this site
-            const textElement = site.querySelector('text');
-            
             if (isReduced) {
                 site.classList.add('reduced-opacity');
-                if (textElement) textElement.style.opacity = '0.3';
             } else {
                 site.classList.remove('reduced-opacity');
-                if (textElement) textElement.style.opacity = '1';
             }
         }
 
