@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 styleElement.textContent = `
                     [id^="Site-"] {
                         cursor: pointer;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
                         fill: var(--bs-dark);
                         stroke: var(--bs-secondary);
                         stroke-width: 1;
@@ -34,16 +33,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill: var(--bs-secondary-bg-subtle);
                         stroke: var(--bs-secondary);
                         stroke-width: 1.5;
-                        filter: drop-shadow(0 0 2px var(--bs-secondary));
                     }
 
                     .active {
-                        transform: scale(1.05);
-                        filter: drop-shadow(0 0 4px #0d6efd);
-                        fill: #cfe2ff;
-                        stroke: #084298;
-                        stroke-width: 2;
-                        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                        fill: #60a5fa;
+                        stroke: #2563eb;
+                        stroke-width: 1.5;
                     }
 
                     .reduced-opacity {
@@ -106,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
-            element.style.transition = 'fill-opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
             element.style.fillOpacity = targetOpacity;
         }
 
@@ -178,6 +172,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update site info if this is the currently selected site
                     if (site === currentlySelectedSite) {
                         updateSiteInfo(site.id, site);
+                        // Remove active class if site becomes unavailable
+                        if (!isReduced) {
+                            site.classList.remove('active');
+                            currentlySelectedSite = null;
+                        }
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
@@ -218,9 +217,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     currentlySelectedSite.classList.remove('active');
                 }
                 
-                // Update current selection
-                currentlySelectedSite = this;
-                this.classList.add('active');
+                // Update current selection only if site is available
+                if (!this.classList.contains('reduced-opacity')) {
+                    currentlySelectedSite = this;
+                    this.classList.add('active');
+                } else {
+                    currentlySelectedSite = null;
+                }
             });
         });
 

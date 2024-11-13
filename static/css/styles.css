@@ -28,7 +28,6 @@
 /* Style for campsite elements */
 [id^="Site-"] {
     cursor: pointer !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     fill: var(--bs-dark);
     stroke: var(--bs-secondary);
     stroke-width: 1;
@@ -59,12 +58,9 @@
 
 /* Active site styling */
 .active {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 4px var(--bs-primary));
-    fill: var(--bs-primary-bg-subtle);
-    stroke: var(--bs-primary);
-    stroke-width: 2;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    fill: #60a5fa;
+    stroke: #2563eb;
+    stroke-width: 1.5;
 }
 
 /* Hover effect for sites */
@@ -72,7 +68,6 @@
     fill: var(--bs-secondary-bg-subtle);
     stroke: var(--bs-secondary);
     stroke-width: 1.5;
-    filter: drop-shadow(0 0 2px var(--bs-secondary));
 }
 
 /* Animation classes */
