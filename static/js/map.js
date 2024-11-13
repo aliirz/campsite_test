@@ -9,9 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
 
+        // Update button text
+        randomizeBtn.textContent = 'Toggle Site Opacity';
+
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
-            const currentOpacity = parseFloat(element.style.fillOpacity) || 0.3;
+            const currentOpacity = parseFloat(element.style.fillOpacity) || 1;
             element.style.setProperty('--previous-opacity', currentOpacity);
             element.style.setProperty('--target-opacity', targetOpacity);
             
@@ -26,13 +29,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
 
-        // Function to reset all sites to default opacity with staggered animation
-        function resetOpacities() {
+        // Function to toggle opacity state
+        function toggleOpacity() {
             randomizeBtn.disabled = true; // Prevent multiple clicks during animation
+            
+            const isReduced = campsites[0].classList.contains('reduced-opacity');
             
             campsites.forEach((site, index) => {
                 setTimeout(() => {
-                    animateOpacityChange(site, 0.3);
+                    if (isReduced) {
+                        site.classList.remove('reduced-opacity');
+                        animateOpacityChange(site, 1);
+                    } else {
+                        site.classList.add('reduced-opacity');
+                        animateOpacityChange(site, 0.3);
+                    }
                     
                     // Enable button after last animation starts
                     if (index === campsites.length - 1) {
@@ -56,7 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     s.classList.remove('active');
                     // Reset opacity for non-selected sites
                     if (s !== this) {
-                        animateOpacityChange(s, 0.3);
+                        if (s.classList.contains('reduced-opacity')) {
+                            animateOpacityChange(s, 0.3);
+                        } else {
+                            animateOpacityChange(s, 1);
+                        }
                     }
                 });
                 
@@ -66,10 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Add click handler to randomize button
-        randomizeBtn.addEventListener('click', resetOpacities);
-
-        // Initial opacity reset
-        resetOpacities();
+        // Add click handler to toggle opacity button
+        randomizeBtn.addEventListener('click', toggleOpacity);
     });
 });

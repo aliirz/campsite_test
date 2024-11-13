@@ -23,12 +23,16 @@
 [id^="Site-"] {
     cursor: pointer;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    fill-opacity: 0.3;
 }
 
 [id^="Site-"]:hover {
     fill-opacity: 1;
     transform: scale(1.02);
+}
+
+/* Reduced opacity class */
+.reduced-opacity {
+    fill-opacity: 0.3;
 }
 
 /* Active site styling */
@@ -46,13 +50,13 @@
 
 @keyframes fadeTransition {
     0% {
-        fill-opacity: var(--previous-opacity, 0.3);
+        fill-opacity: var(--previous-opacity);
     }
     50% {
         fill-opacity: 0.5;
     }
     100% {
-        fill-opacity: var(--target-opacity, 0.3);
+        fill-opacity: var(--target-opacity);
     }
 }
 
