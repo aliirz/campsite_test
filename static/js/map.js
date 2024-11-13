@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     [id^="Site-"] title {
-                        visibility: visible;
+                        display: block;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     .reduced-opacity title {
-                        visibility: hidden;
+                        display: none !important;
                     }
 
                     [id^="Site-"]:hover:not(.reduced-opacity) {
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     site.classList.remove('reduced-opacity');
                     const titleElement = site.querySelector('title');
                     if (titleElement) {
-                        titleElement.style.visibility = 'visible';
+                        titleElement.style.display = 'block';
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
@@ -225,15 +225,14 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const isReduced = !site.classList.contains('reduced-opacity');
+                    const titleElement = site.querySelector('title');
                     
                     if (isReduced) {
                         site.classList.add('reduced-opacity');
-                        const titleElement = site.querySelector('title');
                         if (titleElement) {
-                            titleElement.style.visibility = 'hidden';
+                            titleElement.style.display = 'none';
                         }
                         
-                        // Clear selection if site becomes unavailable
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
@@ -241,9 +240,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         site.classList.remove('reduced-opacity');
-                        const titleElement = site.querySelector('title');
                         if (titleElement) {
-                            titleElement.style.visibility = 'visible';
+                            titleElement.style.display = 'block';
                         }
                     }
                     
