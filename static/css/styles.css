@@ -1,3 +1,4 @@
+/* The following code is modified based on the manager's requests for removing conflicting styles, updating style injection, and enhancing selection state management. */
 .map-container {
     background: var(--bs-dark);
     border-radius: 8px;
@@ -23,25 +24,6 @@
     height: 110%;
     max-height: 88vh;
     object-fit: contain;
-}
-
-/* Style for campsite elements */
-[id^="Site-"] {
-    cursor: pointer !important;
-    fill: var(--bs-dark);
-    stroke: var(--bs-secondary);
-    stroke-width: 1;
-}
-
-[id^="Site-"]:not(.reduced-opacity).active {
-    fill: #3b82f6 !important;  /* Bright blue */
-    stroke: #1d4ed8 !important;  /* Darker blue for contrast */
-    stroke-width: 2 !important;
-}
-
-[id^="Site-"]:not(.reduced-opacity):hover:not(.active) {
-    fill: var(--bs-secondary-bg-subtle);
-    stroke: var(--bs-secondary);
 }
 
 /* Ensure control panel is always visible */

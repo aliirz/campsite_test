@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 styleElement.textContent = `
                     [id^="Site-"] {
                         cursor: pointer;
+                        fill: #2d3748;
+                        stroke: #4a5568;
+                        stroke-width: 1;
+                    }
+
+                    [id^="Site-"].active:not(.reduced-opacity) {
+                        fill: #3b82f6 !important;
+                        stroke: #1d4ed8 !important;
+                        stroke-width: 2 !important;
                     }
 
                     .reduced-opacity {
@@ -157,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
+                            selectedSiteText.textContent = 'None';
                             updateSiteInfo(site.id, site);
                         }
                     }
@@ -189,24 +199,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 lastClickTime = currentTime;
                 
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
-                selectedSiteText.textContent = siteName;
+                
+                if (!this.classList.contains('reduced-opacity')) {
+                    // Clear previous selection
+                    if (currentlySelectedSite && currentlySelectedSite !== this) {
+                        currentlySelectedSite.classList.remove('active');
+                    }
+                    
+                    // Toggle selection on current site
+                    if (this.classList.contains('active')) {
+                        this.classList.remove('active');
+                        currentlySelectedSite = null;
+                        selectedSiteText.textContent = 'None';
+                    } else {
+                        this.classList.add('active');
+                        currentlySelectedSite = this;
+                        selectedSiteText.textContent = siteName;
+                    }
+                } else {
+                    // Clear selection if clicking unavailable site
+                    if (currentlySelectedSite) {
+                        currentlySelectedSite.classList.remove('active');
+                        currentlySelectedSite = null;
+                        selectedSiteText.textContent = 'None';
+                    }
+                }
                 
                 // Update site information
                 updateSiteInfo(this.id, this);
-                
-                if (!this.classList.contains('reduced-opacity')) {
-                    // Remove active state from previous selection
-                    if (currentlySelectedSite) {
-                        currentlySelectedSite.classList.remove('active');
-                    }
-                    currentlySelectedSite = this;
-                    this.classList.add('active');
-                } else {
-                    if (currentlySelectedSite) {
-                        currentlySelectedSite.classList.remove('active');
-                    }
-                    currentlySelectedSite = null;
-                }
             });
         });
 
