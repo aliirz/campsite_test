@@ -39,24 +39,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
 
+        // Function to reset random sites
+        function resetRandomSites() {
+            if (selectedRandomSites.length > 0) {
+                selectedRandomSites.forEach(site => {
+                    site.classList.remove('reduced-opacity');
+                    animateOpacityChange(site, 1);
+                });
+                selectedRandomSites = [];
+            }
+        }
+
         // Function to toggle opacity state
         function toggleOpacity() {
-            randomizeBtn.disabled = true; // Prevent multiple clicks during animation
+            randomizeBtn.disabled = true;
             
-            // If no sites are selected or all sites are at default opacity, select new random sites
-            if (selectedRandomSites.length === 0 || !selectedRandomSites[0].classList.contains('reduced-opacity')) {
-                // Reset previous selection if exists
-                if (selectedRandomSites.length > 0) {
-                    selectedRandomSites.forEach(site => {
-                        site.classList.remove('reduced-opacity');
-                        animateOpacityChange(site, 1);
-                    });
-                }
-                // Select new random sites
-                selectedRandomSites = getRandomSites(campsites, 20);
+            // Select new random sites only if none are currently selected
+            if (selectedRandomSites.length === 0) {
+                selectedRandomSites = getRandomSites(campsites, 50);
             }
             
-            // Toggle opacity for selected sites only
+            // Toggle opacity for selected sites
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const isReduced = site.classList.contains('reduced-opacity');
@@ -64,11 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (isReduced) {
                         site.classList.remove('reduced-opacity');
                         animateOpacityChange(site, 1);
-                        
-                        // Reset selection when all sites return to default
-                        if (index === selectedRandomSites.length - 1) {
-                            selectedRandomSites = [];
-                        }
                     } else {
                         site.classList.add('reduced-opacity');
                         animateOpacityChange(site, 0.3);
@@ -80,13 +78,26 @@ document.addEventListener('DOMContentLoaded', function() {
                             randomizeBtn.disabled = false;
                         }, 500);
                     }
-                }, index * 50); // Stagger each site's animation by 50ms
+                }, index * 50);
             });
         }
 
         // Add click handlers to each campsite
         campsites.forEach(site => {
+            let lastClickTime = 0;
+            
             site.addEventListener('click', function(e) {
+                const currentTime = new Date().getTime();
+                const timeDiff = currentTime - lastClickTime;
+                
+                // Handle double click (if click interval is less than 300ms)
+                if (timeDiff < 300) {
+                    resetRandomSites();
+                    return;
+                }
+                
+                lastClickTime = currentTime;
+                
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
                 console.log(`Clicked ${siteName}`);
                 selectedSiteText.textContent = siteName;
@@ -109,5 +120,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add click handler to toggle opacity button
         randomizeBtn.addEventListener('click', toggleOpacity);
+        
+        // Add double-click handler to toggle button for resetting
+        randomizeBtn.addEventListener('dblclick', resetRandomSites);
     });
 });
