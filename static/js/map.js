@@ -43,6 +43,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill-opacity: 0.3;
                     }
 
+                    .reduced-opacity text {
+                        opacity: 0.3;
+                    }
+
                     /* Prevent text selection globally in SVG */
                     svg {
                         user-select: none;
@@ -64,6 +68,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
                     campsites.forEach(site => {
                         site.style.pointerEvents = 'all';
+                        // Get associated text element
+                        const siteText = site.querySelector('text') || svgDoc.querySelector(`text[data-site="${site.id}"]`);
+                        if (siteText) {
+                            siteText.style.pointerEvents = 'none';
+                        }
                     });
                 }
             } catch (error) {
@@ -114,9 +123,16 @@ document.addEventListener('DOMContentLoaded', function() {
             return shuffled.slice(0, count);
         }
 
-        // Function to animate opacity change
-        function animateOpacityChange(element, targetOpacity) {
-            element.style.fillOpacity = targetOpacity;
+        // Function to update site and text opacity
+        function updateSiteOpacity(site, isReduced) {
+            const siteText = site.querySelector('text') || svgDoc.querySelector(`text[data-site="${site.id}"]`);
+            if (isReduced) {
+                site.classList.add('reduced-opacity');
+                if (siteText) siteText.classList.add('reduced-opacity');
+            } else {
+                site.classList.remove('reduced-opacity');
+                if (siteText) siteText.classList.remove('reduced-opacity');
+            }
         }
 
         // Function to reset random sites
@@ -125,8 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (selectedRandomSites.length > 0) {
                 selectedRandomSites.forEach(site => {
-                    site.classList.remove('reduced-opacity');
-                    animateOpacityChange(site, 1);
+                    updateSiteOpacity(site, false);
                 });
                 selectedRandomSites = [];
                 
@@ -173,23 +188,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
-                    const classList = site.classList;
-                    const isReduced = classList.contains('reduced-opacity');
+                    const isReduced = site.classList.contains('reduced-opacity');
+                    updateSiteOpacity(site, !isReduced);
                     
-                    if (isReduced) {
-                        classList.remove('reduced-opacity');
-                        animateOpacityChange(site, 1);
-                    } else {
-                        classList.add('reduced-opacity');
-                        animateOpacityChange(site, 0.3);
-                        
-                        // Remove active state if this site becomes unavailable
-                        if (site === currentlySelectedSite) {
-                            site.classList.remove('active');
-                            currentlySelectedSite = null;
-                            selectedSiteText.textContent = 'None';
-                            updateSiteInfo(site.id, site);
-                        }
+                    // Remove active state if this site becomes unavailable
+                    if (!isReduced && site === currentlySelectedSite) {
+                        site.classList.remove('active');
+                        currentlySelectedSite = null;
+                        selectedSiteText.textContent = 'None';
+                        updateSiteInfo(site.id, site);
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
