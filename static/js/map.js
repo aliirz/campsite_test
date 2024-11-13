@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     [id^="Site-"] title {
                         visibility: visible;
-                        transition: visibility 0s;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     .reduced-opacity title {
-                        visibility: hidden !important;
+                        visibility: hidden;
                     }
 
                     [id^="Site-"]:hover:not(.reduced-opacity) {
@@ -88,12 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
                     campsites.forEach(site => {
                         site.style.pointerEvents = 'all';
-                        
-                        // Ensure text elements inherit transitions
-                        const textElements = site.querySelectorAll('text');
-                        textElements.forEach(text => {
-                            text.style.transition = 'opacity 0.3s ease, fill 0.3s ease';
-                        });
                     });
                 }
             } catch (error) {
@@ -137,14 +130,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let selectedRandomSites = [];
         let isAnimating = false;
         let doubleClickTimer = null;
-
-        // Function to handle text visibility
-        function updateTextVisibility(site, isUnavailable) {
-            const titleElement = site.querySelector('title');
-            if (titleElement) {
-                titleElement.style.visibility = isUnavailable ? 'hidden' : 'visible';
-            }
-        }
 
         // Function to get random sites
         function getRandomSites(sites, count) {
@@ -212,7 +197,10 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     site.classList.remove('reduced-opacity');
-                    updateTextVisibility(site, false);
+                    const titleElement = site.querySelector('title');
+                    if (titleElement) {
+                        titleElement.style.visibility = 'visible';
+                    }
                     
                     if (index === selectedRandomSites.length - 1) {
                         selectedRandomSites = [];
@@ -240,7 +228,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     if (isReduced) {
                         site.classList.add('reduced-opacity');
-                        updateTextVisibility(site, true);
+                        const titleElement = site.querySelector('title');
+                        if (titleElement) {
+                            titleElement.style.visibility = 'hidden';
+                        }
+                        
                         // Clear selection if site becomes unavailable
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
@@ -249,7 +241,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         site.classList.remove('reduced-opacity');
-                        updateTextVisibility(site, false);
+                        const titleElement = site.querySelector('title');
+                        if (titleElement) {
+                            titleElement.style.visibility = 'visible';
+                        }
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
@@ -258,7 +253,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             isAnimating = false;
                         }, 100);
                     }
-                }, index * 50); // Slightly longer delay between sites
+                }, index * 50);
             });
         }
 
