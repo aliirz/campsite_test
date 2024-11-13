@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         // Initial style injection with retry mechanism
-        setTimeout(injectStyles, 100);
+        injectStyles();
         
         // Select all site elements with correct case-sensitive prefix
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
@@ -62,13 +62,11 @@ document.addEventListener('DOMContentLoaded', function() {
             'Site-A1': {
                 type: 'RV Site',
                 capacity: '4-6 people',
-                status: 'available',
                 features: ['Electric Hookup', 'Water Connection', 'Picnic Table', 'Fire Ring']
             },
             'Site-B2': {
                 type: 'Tent Site',
                 capacity: '2-4 people',
-                status: 'occupied',
                 features: ['Picnic Table', 'Fire Ring', 'Shade Cover']
             }
         };
@@ -100,20 +98,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Function to update site information display
-        function updateSiteInfo(siteId) {
+        function updateSiteInfo(siteId, element) {
             const info = siteInfo[siteId] || {
                 type: 'Standard Site',
                 capacity: '4 people',
-                status: 'available',
                 features: ['Picnic Table', 'Fire Ring']
             };
-
-            siteStatus.textContent = info.status.charAt(0).toUpperCase() + info.status.slice(1);
-            siteStatus.className = `badge ${info.status === 'available' ? 'bg-success' : 'bg-danger'} ms-2`;
+            
+            // Check if site has reduced opacity
+            const isUnavailable = element.classList.contains('reduced-opacity');
+            const status = isUnavailable ? 'unavailable' : 'available';
+            
+            siteStatus.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+            siteStatus.className = `badge ${status === 'available' ? 'bg-success' : 'bg-danger'} ms-2`;
             siteType.textContent = info.type;
             siteCapacity.textContent = info.capacity;
             
-            // Update features list
             siteFeatures.innerHTML = info.features
                 .map(feature => `<li><i class="bi bi-check-circle-fill text-success me-2"></i>${feature}</li>`)
                 .join('');
@@ -173,8 +173,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
                 selectedSiteText.textContent = siteName;
                 
-                // Update site information
-                updateSiteInfo(this.id);
+                // Update site information with the site element
+                updateSiteInfo(this.id, this);
                 
                 // Remove active class from all sites
                 campsites.forEach(s => {
@@ -186,8 +186,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add active class to clicked site
                 this.classList.add('active');
-                this.classList.remove('reduced-opacity');
-                animateOpacityChange(this, 1);
+                if (!this.classList.contains('reduced-opacity')) {
+                    animateOpacityChange(this, 1);
+                }
             });
         });
 
