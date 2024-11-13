@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         transition: opacity 0.3s ease, fill 0.3s ease;
                     }
 
+                    [id^="Site-"] title {
+                        visibility: visible;
+                        transition: visibility 0s;
+                    }
+
                     [id^="Site-"].active:not(.reduced-opacity) {
                         fill: #3b82f6 !important;
                         stroke: #1d4ed8 !important;
@@ -55,6 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     .reduced-opacity text {
                         opacity: 0 !important;
                         fill-opacity: 0 !important;
+                    }
+
+                    .reduced-opacity title {
+                        visibility: hidden !important;
                     }
 
                     [id^="Site-"]:hover:not(.reduced-opacity) {
@@ -131,16 +140,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to handle text visibility
         function updateTextVisibility(site, isUnavailable) {
-            const textElements = site.querySelectorAll('text');
-            textElements.forEach(text => {
-                if (isUnavailable) {
-                    text.style.opacity = '0';
-                    text.style.fillOpacity = '0';
-                } else {
-                    text.style.opacity = '1';
-                    text.style.fillOpacity = '1';
-                }
-            });
+            const titleElement = site.querySelector('title');
+            if (titleElement) {
+                titleElement.style.visibility = isUnavailable ? 'hidden' : 'visible';
+            }
         }
 
         // Function to get random sites
