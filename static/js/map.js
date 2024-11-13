@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         stroke: #4a5568;
                         stroke-width: 1;
                         user-select: none;
+                        transition: fill 0.3s ease, stroke 0.3s ease;
                     }
 
                     [id^="Site-"] text {
@@ -44,10 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     .reduced-opacity {
                         fill-opacity: 0.3;
+                        transition: fill-opacity 0.3s ease;
                     }
 
                     .reduced-opacity text {
                         opacity: 0 !important;
+                    }
+
+                    [id^="Site-"]:hover:not(.reduced-opacity) {
+                        fill: #4b5563;
+                        stroke: #6b7280;
                     }
                 `;
                 
@@ -105,6 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Store selected sites
         let selectedRandomSites = [];
         let isAnimating = false;
+        let doubleClickTimer = null;
 
         // Function to get random sites
         function getRandomSites(sites, count) {
@@ -113,30 +121,47 @@ document.addEventListener('DOMContentLoaded', function() {
             return shuffled.slice(0, count);
         }
 
-        // Function to update site opacity
+        // Function to update site opacity with animation
         function updateSiteOpacity(site, isReduced) {
+            // Store current opacity for animation
+            site.style.setProperty('--previous-opacity', site.classList.contains('reduced-opacity') ? '0.3' : '1');
+            site.style.setProperty('--target-opacity', isReduced ? '0.3' : '1');
+            
+            // Add animation class
+            site.classList.add('site-fade');
+            
+            // Update opacity class
             if (isReduced) {
                 site.classList.add('reduced-opacity');
             } else {
                 site.classList.remove('reduced-opacity');
             }
+            
+            // Remove animation class after animation completes
+            setTimeout(() => {
+                site.classList.remove('site-fade');
+            }, 500);
         }
 
         // Function to reset random sites
         function resetRandomSites() {
             if (isAnimating) return;
             
-            if (selectedRandomSites.length > 0) {
-                selectedRandomSites.forEach(site => {
+            isAnimating = true;
+            selectedRandomSites.forEach((site, index) => {
+                setTimeout(() => {
                     updateSiteOpacity(site, false);
-                });
-                selectedRandomSites = [];
-                
-                // Update site info if currently selected site was affected
-                if (currentlySelectedSite) {
-                    updateSiteInfo(currentlySelectedSite.id, currentlySelectedSite);
-                }
-            }
+                    if (index === selectedRandomSites.length - 1) {
+                        selectedRandomSites = [];
+                        isAnimating = false;
+                        
+                        // Update site info if currently selected site was affected
+                        if (currentlySelectedSite) {
+                            updateSiteInfo(currentlySelectedSite.id, currentlySelectedSite);
+                        }
+                    }
+                }, index * 25);
+            });
         }
 
         // Function to update site information display
@@ -146,6 +171,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 capacity: '4 people',
                 features: ['Picnic Table', 'Fire Ring']
             };
+            
+            selectedSiteText.textContent = element.classList.contains('active') ? 
+                siteId.replace('Site-', 'Site ').toUpperCase() : 'None';
             
             const isUnavailable = element.classList.contains('reduced-opacity');
             const status = isUnavailable ? 'unavailable' : 'available';
@@ -159,7 +187,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 .map(feature => `<li><i class="bi bi-check-circle-fill text-success me-2"></i>${feature}</li>`)
                 .join('');
 
-            siteDetails.classList.remove('d-none');
+            siteDetails.classList.toggle('d-none', !element.classList.contains('active'));
+        }
+
+        // Function to handle site selection
+        function handleSiteSelection(site) {
+            if (site.classList.contains('reduced-opacity')) {
+                // Clear selection if clicking unavailable site
+                if (currentlySelectedSite) {
+                    currentlySelectedSite.classList.remove('active');
+                    currentlySelectedSite = null;
+                }
+            } else {
+                // Clear previous selection
+                if (currentlySelectedSite && currentlySelectedSite !== site) {
+                    currentlySelectedSite.classList.remove('active');
+                }
+                
+                // Toggle selection on current site
+                const isSelected = site.classList.toggle('active');
+                currentlySelectedSite = isSelected ? site : null;
+            }
+            
+            // Update site information
+            updateSiteInfo(site.id, site);
         }
 
         // Function to toggle opacity state
@@ -175,11 +226,15 @@ document.addEventListener('DOMContentLoaded', function() {
             
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
-                    const isReduced = site.classList.contains('reduced-opacity');
-                    updateSiteOpacity(site, !isReduced);
+                    const isReduced = !site.classList.contains('reduced-opacity');
+                    updateSiteOpacity(site, isReduced);
                     
                     // Update site info if this is the currently selected site
                     if (site === currentlySelectedSite) {
+                        if (isReduced) {
+                            site.classList.remove('active');
+                            currentlySelectedSite = null;
+                        }
                         updateSiteInfo(site.id, site);
                     }
                     
@@ -189,63 +244,30 @@ document.addEventListener('DOMContentLoaded', function() {
                             isAnimating = false;
                         }, 100);
                     }
-                }, index * 25); // Reduced delay between sites
+                }, index * 25);
             });
         }
 
         // Add click handlers to each campsite
         campsites.forEach(site => {
-            let lastClickTime = 0;
-            
             site.addEventListener('click', function(e) {
                 if (isAnimating) return;
-                
-                const currentTime = new Date().getTime();
-                const timeDiff = currentTime - lastClickTime;
-                
-                if (timeDiff < 300) {
-                    resetRandomSites();
-                    return;
-                }
-                
-                lastClickTime = currentTime;
-                
-                const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
-                
-                if (!this.classList.contains('reduced-opacity')) {
-                    // Clear previous selection
-                    if (currentlySelectedSite && currentlySelectedSite !== this) {
-                        currentlySelectedSite.classList.remove('active');
-                    }
-                    
-                    // Toggle selection on current site
-                    if (this.classList.contains('active')) {
-                        this.classList.remove('active');
-                        currentlySelectedSite = null;
-                        selectedSiteText.textContent = 'None';
-                    } else {
-                        this.classList.add('active');
-                        currentlySelectedSite = this;
-                        selectedSiteText.textContent = siteName;
-                    }
-                } else {
-                    // Clear selection if clicking unavailable site
-                    if (currentlySelectedSite) {
-                        currentlySelectedSite.classList.remove('active');
-                        currentlySelectedSite = null;
-                        selectedSiteText.textContent = 'None';
-                    }
-                }
-                
-                // Update site information
-                updateSiteInfo(this.id, this);
+                handleSiteSelection(this);
             });
         });
 
-        // Add click handler to toggle opacity button
-        randomizeBtn.addEventListener('click', toggleOpacity);
-        
-        // Add double-click handler to toggle button for resetting
-        randomizeBtn.addEventListener('dblclick', resetRandomSites);
+        // Add click handler to toggle opacity button with improved double-click detection
+        randomizeBtn.addEventListener('click', function(e) {
+            if (doubleClickTimer === null) {
+                doubleClickTimer = setTimeout(() => {
+                    doubleClickTimer = null;
+                    toggleOpacity();
+                }, 250);
+            } else {
+                clearTimeout(doubleClickTimer);
+                doubleClickTimer = null;
+                resetRandomSites();
+            }
+        });
     });
 });
