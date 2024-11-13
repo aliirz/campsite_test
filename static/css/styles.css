@@ -22,12 +22,37 @@
 /* Style for campsite elements */
 [id^="Site-"] {
     cursor: pointer;
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
 [id^="Site-"]:hover {
     fill-opacity: 1;
-    transform: scale(1.02);
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 3px var(--bs-primary));
+    stroke: var(--bs-primary);
+    stroke-width: 1.5;
+}
+
+/* Tooltip styles */
+[id^="Site-"]::after {
+    content: attr(id);
+    position: absolute;
+    background: var(--bs-dark);
+    color: var(--bs-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 12px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease-in-out;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+[id^="Site-"]:hover::after {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Reduced opacity class */
@@ -40,7 +65,7 @@
     stroke: var(--bs-primary);
     stroke-width: 2;
     fill-opacity: 1 !important;
-    filter: drop-shadow(0 0 2px var(--bs-primary));
+    filter: drop-shadow(0 0 4px var(--bs-primary));
 }
 
 /* Animation classes */
