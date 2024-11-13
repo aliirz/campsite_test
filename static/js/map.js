@@ -9,14 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
 
-        // Function to generate random opacity between 0.3 and 1
-        function getRandomOpacity() {
-            return Math.random() * 0.7 + 0.3; // Range: 0.3 to 1.0
-        }
-
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
-            const currentOpacity = parseFloat(element.style.fillOpacity) || 0.7;
+            const currentOpacity = parseFloat(element.style.fillOpacity) || 0.3;
             element.style.setProperty('--previous-opacity', currentOpacity);
             element.style.setProperty('--target-opacity', targetOpacity);
             
@@ -31,14 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
         }
 
-        // Function to randomize opacities of all campsites with staggered animation
-        function randomizeOpacities() {
+        // Function to reset all sites to default opacity with staggered animation
+        function resetOpacities() {
             randomizeBtn.disabled = true; // Prevent multiple clicks during animation
             
             campsites.forEach((site, index) => {
                 setTimeout(() => {
-                    const newOpacity = getRandomOpacity();
-                    animateOpacityChange(site, newOpacity);
+                    animateOpacityChange(site, 0.3);
                     
                     // Enable button after last animation starts
                     if (index === campsites.length - 1) {
@@ -62,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     s.classList.remove('active');
                     // Reset opacity for non-selected sites
                     if (s !== this) {
-                        animateOpacityChange(s, 0.7);
+                        animateOpacityChange(s, 0.3);
                     }
                 });
                 
@@ -73,9 +67,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // Add click handler to randomize button
-        randomizeBtn.addEventListener('click', randomizeOpacities);
+        randomizeBtn.addEventListener('click', resetOpacities);
 
-        // Initial randomization
-        randomizeOpacities();
+        // Initial opacity reset
+        resetOpacities();
     });
 });

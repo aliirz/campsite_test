@@ -23,7 +23,7 @@
 [id^="Site-"] {
     cursor: pointer;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    fill-opacity: 0.7;
+    fill-opacity: 0.3;
 }
 
 [id^="Site-"]:hover {
@@ -46,13 +46,13 @@
 
 @keyframes fadeTransition {
     0% {
-        fill-opacity: var(--previous-opacity, 0.7);
+        fill-opacity: var(--previous-opacity, 0.3);
     }
     50% {
         fill-opacity: 0.5;
     }
     100% {
-        fill-opacity: var(--target-opacity, 0.7);
+        fill-opacity: var(--target-opacity, 0.3);
     }
 }
 
