@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         randomizeBtn.textContent = 'Toggle Site Opacity';
 
         // Store selected sites
-        let selectedRandomSites = null;
+        let selectedRandomSites = [];
 
         // Function to get random sites
         function getRandomSites(sites, count) {
@@ -44,9 +44,9 @@ document.addEventListener('DOMContentLoaded', function() {
             randomizeBtn.disabled = true; // Prevent multiple clicks during animation
             
             // If no sites are selected or all sites are at default opacity, select new random sites
-            if (!selectedRandomSites || !selectedRandomSites[0].classList.contains('reduced-opacity')) {
+            if (selectedRandomSites.length === 0 || !selectedRandomSites[0].classList.contains('reduced-opacity')) {
                 // Reset previous selection if exists
-                if (selectedRandomSites) {
+                if (selectedRandomSites.length > 0) {
                     selectedRandomSites.forEach(site => {
                         site.classList.remove('reduced-opacity');
                         animateOpacityChange(site, 1);
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         // Reset selection when all sites return to default
                         if (index === selectedRandomSites.length - 1) {
-                            selectedRandomSites = null;
+                            selectedRandomSites = [];
                         }
                     } else {
                         site.classList.add('reduced-opacity');
