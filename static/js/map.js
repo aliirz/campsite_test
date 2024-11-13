@@ -5,55 +5,43 @@ document.addEventListener('DOMContentLoaded', function() {
     mapObject.addEventListener('load', function() {
         const svgDoc = mapObject.contentDocument;
         
-        // Inject styles directly into SVG document
-        const styleSheet = document.createElement('style');
-        styleSheet.textContent = `
+        // Inject styles directly into SVG root element
+        const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
+        styleElement.textContent = `
             [id^="Site-"] {
-                cursor: pointer !important;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                transform-origin: center !important;
-                transform-box: fill-box !important;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
             [id^="Site-"]:hover {
-                transform: scale(1.05) !important;
-                filter: drop-shadow(0 0 5px #0d6efd) !important;
-                fill: #cfe2ff !important;
-                stroke: #0d6efd !important;
-                stroke-width: 2 !important;
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 5px #0d6efd);
+                fill: #cfe2ff;
+                stroke: #0d6efd;
+                stroke-width: 2;
             }
 
             .active {
-                transform: scale(1.05) !important;
-                filter: drop-shadow(0 0 5px #0d6efd) !important;
-                fill: #cfe2ff !important;
-                stroke: #0d6efd !important;
-                stroke-width: 2 !important;
+                transform: scale(1.05);
+                filter: drop-shadow(0 0 5px #0d6efd);
+                fill: #cfe2ff;
+                stroke: #0d6efd;
+                stroke-width: 2;
             }
 
             .reduced-opacity {
-                fill-opacity: 0.3 !important;
-            }
-
-            .site-fade {
-                animation: fadeTransition 0.5s ease-in-out;
-            }
-
-            @keyframes fadeTransition {
-                0% { fill-opacity: var(--previous-opacity); }
-                50% { fill-opacity: 0.5; }
-                100% { fill-opacity: var(--target-opacity); }
+                fill-opacity: 0.3;
             }
         `;
-        svgDoc.head.appendChild(styleSheet);
+        svgDoc.documentElement.appendChild(styleElement);
+
+        // Add a class to the SVG root for scoping
+        svgDoc.documentElement.classList.add('interactive-map');
         
         // Select all site elements with correct case-sensitive prefix
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
-
-        // Update button text
-        randomizeBtn.textContent = 'Toggle Site Opacity';
 
         // Store selected sites
         let selectedRandomSites = [];
@@ -70,23 +58,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentOpacity = parseFloat(element.style.fillOpacity) || 1;
             element.style.setProperty('--previous-opacity', currentOpacity);
             element.style.setProperty('--target-opacity', targetOpacity);
-            
-            // Remove and re-add animation class to trigger it
-            element.setAttribute('class', element.getAttribute('class')?.replace('site-fade', '') || '');
-            void element.offsetWidth; // Force reflow
-            element.setAttribute('class', (element.getAttribute('class') || '') + ' site-fade');
-            
-            // Set the final opacity after animation
-            setTimeout(() => {
-                element.style.fillOpacity = targetOpacity;
-            }, 500);
+            element.style.fillOpacity = targetOpacity;
         }
 
         // Function to reset random sites
         function resetRandomSites() {
             if (selectedRandomSites.length > 0) {
                 selectedRandomSites.forEach(site => {
-                    site.setAttribute('class', site.getAttribute('class')?.replace('reduced-opacity', '') || '');
+                    site.classList.remove('reduced-opacity');
                     animateOpacityChange(site, 1);
                 });
                 selectedRandomSites = [];
@@ -105,13 +84,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Toggle opacity for selected sites
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
-                    const isReduced = site.getAttribute('class')?.includes('reduced-opacity');
+                    const classList = site.classList;
+                    const isReduced = classList.contains('reduced-opacity');
                     
                     if (isReduced) {
-                        site.setAttribute('class', site.getAttribute('class')?.replace('reduced-opacity', '') || '');
+                        classList.remove('reduced-opacity');
                         animateOpacityChange(site, 1);
                     } else {
-                        site.setAttribute('class', (site.getAttribute('class') || '') + ' reduced-opacity');
+                        classList.add('reduced-opacity');
                         animateOpacityChange(site, 0.3);
                     }
                     
@@ -142,21 +122,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 lastClickTime = currentTime;
                 
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
-                console.log(`Clicked ${siteName}`);
                 selectedSiteText.textContent = siteName;
                 
                 // Remove active class from all sites
                 campsites.forEach(s => {
-                    s.setAttribute('class', s.getAttribute('class')?.replace('active', '') || '');
-                    // Keep opacity state for non-selected sites
-                    if (s !== this && !s.getAttribute('class')?.includes('reduced-opacity')) {
+                    s.classList.remove('active');
+                    if (s !== this && !s.classList.contains('reduced-opacity')) {
                         animateOpacityChange(s, 1);
                     }
                 });
                 
-                // Add active class to clicked site and ensure it's fully opaque
-                this.setAttribute('class', (this.getAttribute('class') || '') + ' active');
-                this.setAttribute('class', this.getAttribute('class')?.replace('reduced-opacity', '') || '');
+                // Add active class to clicked site
+                this.classList.add('active');
+                this.classList.remove('reduced-opacity');
                 animateOpacityChange(this, 1);
             });
         });
