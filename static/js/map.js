@@ -5,38 +5,26 @@ document.addEventListener('DOMContentLoaded', function() {
     mapObject.addEventListener('load', function() {
         const svgDoc = mapObject.contentDocument;
         
-        // Inject styles directly into SVG root element
-        const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
-        styleElement.textContent = `
-            [id^="Site-"] {
-                cursor: pointer;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            }
+        // Add error handling for SVG style injection
+        if (svgDoc && svgDoc.documentElement) {
+            const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
+            styleElement.textContent = `
+                [id^="Site-"] {
+                    cursor: pointer;
+                }
 
-            [id^="Site-"]:hover {
-                transform: scale(1.05);
-                filter: drop-shadow(0 0 5px #0d6efd);
-                fill: #cfe2ff;
-                stroke: #0d6efd;
-                stroke-width: 2;
-            }
+                .active {
+                    fill: #cfe2ff;
+                    stroke: #0d6efd;
+                    stroke-width: 2;
+                }
 
-            .active {
-                transform: scale(1.05);
-                filter: drop-shadow(0 0 5px #0d6efd);
-                fill: #cfe2ff;
-                stroke: #0d6efd;
-                stroke-width: 2;
-            }
-
-            .reduced-opacity {
-                fill-opacity: 0.3;
-            }
-        `;
-        svgDoc.documentElement.appendChild(styleElement);
-
-        // Add a class to the SVG root for scoping
-        svgDoc.documentElement.classList.add('interactive-map');
+                .reduced-opacity {
+                    fill-opacity: 0.3;
+                }
+            `;
+            svgDoc.documentElement.appendChild(styleElement);
+        }
         
         // Select all site elements with correct case-sensitive prefix
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
@@ -55,9 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Function to animate opacity change
         function animateOpacityChange(element, targetOpacity) {
-            const currentOpacity = parseFloat(element.style.fillOpacity) || 1;
-            element.style.setProperty('--previous-opacity', currentOpacity);
-            element.style.setProperty('--target-opacity', targetOpacity);
             element.style.fillOpacity = targetOpacity;
         }
 

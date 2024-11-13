@@ -22,17 +22,13 @@
 /* Style for campsite elements */
 [id^="Site-"] {
     cursor: pointer !important;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    transform-origin: center;
-    transform-box: fill-box;
 }
 
-[id^="Site-"]:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 5px var(--bs-primary));
-    fill: var(--bs-primary-bg-subtle);
-    stroke: var(--bs-primary);
-    stroke-width: 2;
+/* Ensure control panel is always visible */
+@media (max-width: 992px) {
+    .map-container {
+        min-height: 60vh;
+    }
 }
 
 /* Reduced opacity class */
@@ -63,12 +59,5 @@
     }
     100% {
         fill-opacity: var(--target-opacity);
-    }
-}
-
-/* Ensure control panel is always visible */
-@media (max-width: 992px) {
-    .map-container {
-        min-height: 60vh;
     }
 }
