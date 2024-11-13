@@ -20,13 +20,13 @@
 }
 
 /* Style for campsite elements */
-[id^="site_"] {
+[id^="site-"] {
     cursor: pointer;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     fill-opacity: 0.7;
 }
 
-[id^="site_"]:hover {
+[id^="site-"]:hover {
     fill-opacity: 1;
     transform: scale(1.02);
 }

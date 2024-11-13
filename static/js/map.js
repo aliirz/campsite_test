@@ -4,8 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     mapObject.addEventListener('load', function() {
         const svgDoc = mapObject.contentDocument;
-        // Select all site elements (assuming they have IDs starting with "site_")
-        const campsites = svgDoc.querySelectorAll('[id^="site_"]');
+        // Select all site elements (assuming they have IDs starting with "site-")
+        const campsites = svgDoc.querySelectorAll('[id^="site-"]');
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
 
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add click handlers to each campsite
         campsites.forEach(site => {
             site.addEventListener('click', function(e) {
-                const siteName = this.id.replace('site_', 'Site ').toUpperCase();
+                const siteName = this.id.replace('site-', 'Site ').toUpperCase();
                 console.log(`Clicked ${siteName}`);
                 selectedSiteText.textContent = siteName;
                 
