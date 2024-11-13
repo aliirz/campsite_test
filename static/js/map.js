@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         fill: #2d3748;
                         stroke: #4a5568;
                         stroke-width: 1;
+                        user-select: none;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -38,12 +42,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     .reduced-opacity {
                         fill-opacity: 0.3;
                     }
+
+                    /* Prevent text selection globally in SVG */
+                    svg {
+                        user-select: none;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                    }
                 `;
                 
                 const svgRoot = svgDoc.documentElement;
                 if (svgRoot) {
                     svgRoot.appendChild(styleElement);
                     console.log('SVG styles successfully injected');
+                    
+                    // Add pointer-events style to SVG root
+                    svgRoot.style.pointerEvents = 'none';
+                    
+                    // Enable pointer events only for interactive elements
+                    const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
+                    campsites.forEach(site => {
+                        site.style.pointerEvents = 'all';
+                    });
                 }
             } catch (error) {
                 console.warn('Style injection failed:', error);

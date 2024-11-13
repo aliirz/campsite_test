@@ -9,6 +9,10 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
 }
 
 .map-container object {
@@ -24,6 +28,10 @@
     height: 110%;
     max-height: 88vh;
     object-fit: contain;
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 /* Ensure control panel is always visible */
