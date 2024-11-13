@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     .active {
                         fill: #cfe2ff;
-                        stroke: #0d6efd;
-                        stroke-width: 2;
+                        stroke: #084298;
+                        stroke-width: 3;
                     }
 
                     .reduced-opacity {
