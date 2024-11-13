@@ -6,30 +6,60 @@ document.addEventListener('DOMContentLoaded', function() {
         const svgDoc = mapObject.contentDocument;
         
         // Add error handling for SVG style injection
-        if (svgDoc && svgDoc.documentElement) {
-            const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
-            styleElement.textContent = `
-                [id^="Site-"] {
-                    cursor: pointer;
-                }
+        const injectStyles = () => {
+            if (svgDoc && svgDoc.documentElement) {
+                // Check if styles are already injected
+                const existingStyle = svgDoc.querySelector('style');
+                if (existingStyle) return;
 
-                .active {
-                    fill: #cfe2ff;
-                    stroke: #0d6efd;
-                    stroke-width: 2;
-                }
+                const styleElement = svgDoc.createElementNS("http://www.w3.org/2000/svg", "style");
+                styleElement.textContent = `
+                    [id^="Site-"] {
+                        cursor: pointer;
+                    }
 
-                .reduced-opacity {
-                    fill-opacity: 0.3;
-                }
-            `;
-            svgDoc.documentElement.appendChild(styleElement);
-        }
+                    .active {
+                        fill: #cfe2ff;
+                        stroke: #0d6efd;
+                        stroke-width: 2;
+                    }
+
+                    .reduced-opacity {
+                        fill-opacity: 0.3;
+                    }
+                `;
+                svgDoc.documentElement.appendChild(styleElement);
+            }
+        };
+
+        // Retry style injection if initial attempt fails
+        setTimeout(injectStyles, 100);
         
         // Select all site elements with correct case-sensitive prefix
         const campsites = svgDoc.querySelectorAll('[id^="Site-"]');
         const randomizeBtn = document.getElementById('randomizeBtn');
         const selectedSiteText = document.getElementById('selectedSite');
+        const siteDetails = document.getElementById('siteDetails');
+        const siteStatus = document.getElementById('siteStatus');
+        const siteType = document.getElementById('siteType');
+        const siteCapacity = document.getElementById('siteCapacity');
+        const siteFeatures = document.getElementById('siteFeatures');
+
+        // Mock data for site information (in real app, this would come from a database)
+        const siteInfo = {
+            'Site-A1': {
+                type: 'RV Site',
+                capacity: '4-6 people',
+                status: 'available',
+                features: ['Electric Hookup', 'Water Connection', 'Picnic Table', 'Fire Ring']
+            },
+            'Site-B2': {
+                type: 'Tent Site',
+                capacity: '2-4 people',
+                status: 'occupied',
+                features: ['Picnic Table', 'Fire Ring', 'Shade Cover']
+            }
+        };
 
         // Store selected sites
         let selectedRandomSites = [];
@@ -55,6 +85,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 selectedRandomSites = [];
             }
+        }
+
+        // Function to update site information display
+        function updateSiteInfo(siteId) {
+            const info = siteInfo[siteId] || {
+                type: 'Standard Site',
+                capacity: '4 people',
+                status: 'available',
+                features: ['Picnic Table', 'Fire Ring']
+            };
+
+            siteStatus.textContent = info.status.charAt(0).toUpperCase() + info.status.slice(1);
+            siteStatus.className = `badge ${info.status === 'available' ? 'bg-success' : 'bg-danger'} ms-2`;
+            siteType.textContent = info.type;
+            siteCapacity.textContent = info.capacity;
+            
+            // Update features list
+            siteFeatures.innerHTML = info.features
+                .map(feature => `<li><i class="bi bi-check-circle-fill text-success me-2"></i>${feature}</li>`)
+                .join('');
+
+            siteDetails.classList.remove('d-none');
         }
 
         // Function to toggle opacity state
@@ -108,6 +160,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const siteName = this.id.replace('Site-', 'Site ').toUpperCase();
                 selectedSiteText.textContent = siteName;
+                
+                // Update site information
+                updateSiteInfo(this.id);
                 
                 // Remove active class from all sites
                 campsites.forEach(s => {

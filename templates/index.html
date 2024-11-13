@@ -18,15 +18,41 @@
                 </div>
             </div>
             <div class="col-lg-3">
-                <div class="card">
+                <div class="card mb-3">
                     <div class="card-body">
                         <h5 class="card-title">Controls</h5>
                         <button id="randomizeBtn" class="btn btn-secondary w-100 mb-3">
                             Toggle Site Opacity
                         </button>
-                        <div class="selected-site mt-3">
-                            <h6>Selected Site:</h6>
-                            <p id="selectedSite" class="mb-0">None</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">Site Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="site-info">
+                            <h6 class="mb-3">Selected Site:</h6>
+                            <p id="selectedSite" class="h4 mb-3 text-primary">None</p>
+                            <div id="siteDetails" class="d-none">
+                                <div class="mb-2">
+                                    <strong>Status:</strong>
+                                    <span id="siteStatus" class="badge bg-success ms-2">Available</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Type:</strong>
+                                    <span id="siteType" class="text-secondary"></span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Capacity:</strong>
+                                    <span id="siteCapacity" class="text-secondary"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <strong>Features:</strong>
+                                    <ul id="siteFeatures" class="list-unstyled mt-2">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
