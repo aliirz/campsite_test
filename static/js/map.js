@@ -35,11 +35,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         pointer-events: none;
                         user-select: none;
                         fill: #e2e8f0;
-                        transition: opacity 0.3s ease, fill 0.3s ease;
+                        transition: opacity 0.3s ease;
                     }
 
-                    [id^="Site-"] title {
-                        display: block;
+                    [id^="Site-"].reduced-opacity {
+                        fill-opacity: 0.15 !important;
+                    }
+
+                    [id^="Site-"].reduced-opacity title {
+                        visibility: hidden;
+                    }
+
+                    [id^="Site-"].reduced-opacity text {
+                        opacity: 0;
                     }
 
                     [id^="Site-"].active:not(.reduced-opacity) {
@@ -50,19 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     [id^="Site-"].active:not(.reduced-opacity) text {
                         fill: #ffffff !important;
-                    }
-
-                    .reduced-opacity {
-                        fill-opacity: 0.15 !important;
-                    }
-
-                    .reduced-opacity text {
-                        opacity: 0 !important;
-                        fill-opacity: 0 !important;
-                    }
-
-                    .reduced-opacity title {
-                        display: none !important;
                     }
 
                     [id^="Site-"]:hover:not(.reduced-opacity) {
@@ -197,10 +192,6 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     site.classList.remove('reduced-opacity');
-                    const titleElement = site.querySelector('title');
-                    if (titleElement) {
-                        titleElement.style.display = 'block';
-                    }
                     
                     if (index === selectedRandomSites.length - 1) {
                         selectedRandomSites = [];
@@ -225,14 +216,9 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const isReduced = !site.classList.contains('reduced-opacity');
-                    const titleElement = site.querySelector('title');
                     
                     if (isReduced) {
                         site.classList.add('reduced-opacity');
-                        if (titleElement) {
-                            titleElement.style.display = 'none';
-                        }
-                        
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
@@ -240,9 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         site.classList.remove('reduced-opacity');
-                        if (titleElement) {
-                            titleElement.style.display = 'block';
-                        }
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
