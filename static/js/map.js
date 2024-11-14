@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
 
                     [id^="Site-"].reduced-opacity title {
-                        visibility: hidden;
+                        display: none !important;
                     }
 
                     [id^="Site-"].reduced-opacity text {
@@ -192,6 +192,11 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     site.classList.remove('reduced-opacity');
+                    // Show title element
+                    const titleElement = site.querySelector('title');
+                    if (titleElement) {
+                        titleElement.setAttribute('visibility', 'visible');
+                    }
                     
                     if (index === selectedRandomSites.length - 1) {
                         selectedRandomSites = [];
@@ -216,9 +221,20 @@ document.addEventListener('DOMContentLoaded', function() {
             selectedRandomSites.forEach((site, index) => {
                 setTimeout(() => {
                     const isReduced = !site.classList.contains('reduced-opacity');
+                    const siteNumber = site.id.replace('Site-', '');
+                    
+                    // Find the text element in the SVG document
+                    const textElement = svgDoc.getElementById(siteNumber);
+                    const tspanElement = textElement?.querySelector('tspan');
                     
                     if (isReduced) {
                         site.classList.add('reduced-opacity');
+                        if (textElement) {
+                            textElement.style.opacity = '0';
+                            if (tspanElement) {
+                                tspanElement.style.opacity = '0';
+                            }
+                        }
                         if (site === currentlySelectedSite) {
                             site.classList.remove('active');
                             currentlySelectedSite = null;
@@ -226,6 +242,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     } else {
                         site.classList.remove('reduced-opacity');
+                        if (textElement) {
+                            textElement.style.opacity = '1';
+                            if (tspanElement) {
+                                tspanElement.style.opacity = '1';
+                            }
+                        }
                     }
                     
                     if (index === selectedRandomSites.length - 1) {
